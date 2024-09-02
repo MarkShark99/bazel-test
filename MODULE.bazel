@@ -1,0 +1,63 @@
+"""
+MODULE.bazel
+"""
+
+module(
+    name = "synth",
+    version = "0.1.0",
+)
+
+bazel_dep(name = "rules_cc", version = "0.0.9")
+bazel_dep(name = "platforms", version = "0.0.9")
+bazel_dep(name = "rules_foreign_cc", version = "0.10.1")
+bazel_dep(name = "rules_boost", repo_name = "com_github_nelhage_rules_boost")
+
+register_toolchains(
+    "@rules_foreign_cc//toolchains:built_ninja_toolchain",
+)
+
+# Boost
+archive_override(
+    module_name = "rules_boost",
+    urls = "https://github.com/nelhage/rules_boost/archive/master.tar.gz",
+    strip_prefix = "rules_boost-master",
+    integrity = "sha256-cbYu58gx1KNH739zub4MCJ2I39ZpQmxPPY91cTiGhlA=",
+)
+non_module_boost_repositories = use_extension("@com_github_nelhage_rules_boost//:boost/repositories.bzl", "non_module_dependencies")
+use_repo(
+    non_module_boost_repositories,
+    "boost",
+)
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+git_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+http_archive(
+    name = "miniaudio",
+    urls = ["https://github.com/mackron/miniaudio/archive/refs/tags/0.11.21.zip"],
+    integrity = "sha256-y96QiHHiYZEV/SFsdCNSZTSAYP59NA+YDNFDQuiNf3I=",
+    strip_prefix = "miniaudio-0.11.21",
+    build_file = "@//third_party/miniaudio:BUILD",
+) 
+
+http_archive(
+    name = "raylib",
+    urls = ["https://github.com/raysan5/raylib/archive/refs/tags/5.0.zip"],
+    integrity = "sha256-cB+S8GRvvxzsXsw7vJ0n1lEaPJFjwe+KZ5sVR0zoVPU=",
+    strip_prefix = "raylib-5.0",
+    build_file = "@//third_party/raylib:BUILD",
+)
+
+http_archive(
+    name = "googletest",
+    urls = ["https://github.com/google/googletest/archive/refs/tags/v1.14.0.tar.gz"],
+    integrity = "sha256-itWYxzrXluDYKAsILOvYKmMNc+c808cAV5OKZQG7pdc=",
+    strip_prefix = "googletest-1.14.0",
+)
+
+git_repository(
+    name = "fruit",
+    remote = "https://github.com/google/fruit",
+    commit = "f47f76e4cf02843e9ebc88e3e2f8181553ac3ab2",
+    strip_prefix = "extras/bazel_root",
+)
