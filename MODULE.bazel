@@ -3,7 +3,7 @@ MODULE.bazel
 """
 
 module(
-    name = "synth",
+    name = "bazel-test",
     version = "0.1.0",
 )
 
